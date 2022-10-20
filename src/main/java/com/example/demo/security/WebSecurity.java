@@ -2,6 +2,7 @@ package com.example.demo.security;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpMethod;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -32,11 +33,14 @@ public class WebSecurity {
 		.userDetailsService(userDetailsService)
 		.passwordEncoder(bCryptPasswordEncoder);
 		
-		//AuthenticationManager authenticationManager = authenticationManagerBuilder.build();
+		AuthenticationManager authenticationManager = authenticationManagerBuilder.build();
+		http.authenticationManager(authenticationManager);
 		
 		http.csrf().disable()
-		.authorizeRequests().antMatchers(HttpMethod.POST, "/users")
-		.permitAll().anyRequest().authenticated();
+		.authorizeRequests().antMatchers(HttpMethod.POST, SecurityConstants.SIGN_UP_URL)
+		.permitAll()
+		.anyRequest()
+		.authenticated().and().addFilter(new AuthenticationFilter(authenticationManager));
 		
 		return http.build();
 	}
