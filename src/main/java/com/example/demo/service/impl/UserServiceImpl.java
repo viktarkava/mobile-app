@@ -1,6 +1,5 @@
 package com.example.demo.service.impl;
 
-import java.util.ArrayDeque;
 import java.util.ArrayList;
 
 import org.springframework.beans.BeanUtils;
@@ -11,8 +10,8 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import com.example.demo.UserRepository;
 import com.example.demo.io.entity.UserEntity;
+import com.example.demo.io.repositories.UserRepository;
 import com.example.demo.service.UserService;
 import com.example.demo.shared.Utils;
 import com.example.demo.shared.dto.UserDto;
@@ -46,6 +45,17 @@ public class UserServiceImpl implements UserService{
 		UserDto returnValue = new UserDto();
 		BeanUtils.copyProperties(storedUserDetails, returnValue);
 		
+		return returnValue;
+	}
+	
+	@Override
+	public UserDto getUser(String email) {
+		UserEntity userEntity = userRepository.findByEmail(email);
+		
+		if(userEntity == null) throw new UsernameNotFoundException(email);
+		
+		UserDto returnValue = new UserDto();
+		BeanUtils.copyProperties(userEntity, returnValue);
 		return returnValue;
 	}
 
