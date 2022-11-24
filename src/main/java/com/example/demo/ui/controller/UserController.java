@@ -27,7 +27,7 @@ import com.example.demo.ui.model.response.RequestOperationStatus;
 import com.example.demo.ui.model.response.UserRest;
 
 @RestController
-@RequestMapping("users") // http://localhost:8080/users
+@RequestMapping("users") // http://localhost:8080/mobile-app-ws/
 public class UserController {
 
 	@Autowired
