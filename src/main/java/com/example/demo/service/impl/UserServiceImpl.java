@@ -3,6 +3,7 @@ package com.example.demo.service.impl;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -19,6 +20,7 @@ import com.example.demo.io.entity.UserEntity;
 import com.example.demo.io.repositories.UserRepository;
 import com.example.demo.service.UserService;
 import com.example.demo.shared.Utils;
+import com.example.demo.shared.dto.AddressDTO;
 import com.example.demo.shared.dto.UserDto;
 import com.example.demo.ui.model.response.ErrorMessages;
 
@@ -40,8 +42,14 @@ public class UserServiceImpl implements UserService {
 		if (userRepository.findByEmail(user.getEmail()) != null)
 			throw new RuntimeException("record already exists");
 
-		UserEntity userEntity = new UserEntity();
-		BeanUtils.copyProperties(user, userEntity);
+		for (AddressDTO dto : user.getAddresses()) {
+			dto.setUserDetails(user);
+			dto.setAddressId(utils.generateAssressId(30));
+		}
+
+		// BeanUtils.copyProperties(user, userEntity);
+		ModelMapper modelMapper = new ModelMapper();
+		UserEntity userEntity = modelMapper.map(user, UserEntity.class);
 
 		String publicUserId = utils.generateUserId(30);
 		userEntity.setEncryptedPassword(bCryptPasswordEncoder.encode(user.getPassword()));
@@ -49,8 +57,8 @@ public class UserServiceImpl implements UserService {
 
 		UserEntity storedUserDetails = userRepository.save(userEntity);
 
-		UserDto returnValue = new UserDto();
-		BeanUtils.copyProperties(storedUserDetails, returnValue);
+		// BeanUtils.copyProperties(storedUserDetails, returnValue);
+		UserDto returnValue = modelMapper.map(storedUserDetails, UserDto.class);
 
 		return returnValue;
 	}
