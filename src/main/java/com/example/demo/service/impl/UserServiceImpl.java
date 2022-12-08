@@ -123,19 +123,13 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public List<UserDto> getUsers(int page, int limit) {
 		List<UserDto> returnValue = new ArrayList<>();
-
 		Pageable pageRequest = PageRequest.of(page, limit);
-
 		Page<UserEntity> usersPage = userRepository.findAll(pageRequest);
-
 		List<UserEntity> users = usersPage.getContent();
-
+		ModelMapper modelMapper = new ModelMapper();
 		for (UserEntity userEntity : users) {
-			UserDto userDto = new UserDto();
-			BeanUtils.copyProperties(userEntity, userDto);
-			returnValue.add(userDto);
+			returnValue.add(modelMapper.map(userEntity, UserDto.class));
 		}
-
 		return returnValue;
 	}
 }
