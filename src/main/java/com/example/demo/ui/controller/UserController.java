@@ -134,6 +134,13 @@ public class UserController {
 			}.getType();
 			ModelMapper modelMapper = new ModelMapper();
 			returnValue = modelMapper.map(addressesDto, listType);
+			
+			for(AddressesRest addressRest : returnValue) {
+				Link selfLink = WebMvcLinkBuilder
+						.linkTo(WebMvcLinkBuilder.methodOn(UserController.class).getUserAddress(id, addressRest.getAddressId()))
+						.withSelfRel();
+				addressRest.add(selfLink);
+			}
 		}
 
 		Link userLink = WebMvcLinkBuilder.linkTo(UserController.class).slash(id).withRel("user");
